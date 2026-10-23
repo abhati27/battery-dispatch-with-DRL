@@ -26,8 +26,8 @@ SAVE_PATH = os.path.join('log/', ENV_KWARGS['env_name'], 'sac/run', input('Save 
 
 # EXP PARAMS
 EXP_PARAMS = {
-    'n_runs': 5,
-    'n_episodes': 50,
+    'n_runs': int(os.environ.get('N_RUNS', 5)),
+    'n_episodes': int(os.environ.get('N_EPISODES', 50)),
     'seed': 22,
     # Reward wrapper
     'inactive_penalty': {
@@ -87,7 +87,10 @@ if SAVE_PATH is not None:
 RL_PARAMS['policy_kwargs']['net_arch'] = net_arch_dict[RL_PARAMS['policy_kwargs']['net_arch']]
 RL_PARAMS['policy_kwargs']['activation_fn'] = activation_fn_dict[RL_PARAMS['policy_kwargs']['activation_fn']]
 
-for run in range(EXP_PARAMS['n_runs']):
+# RUN set: train only that seed (one Slurm array task per seed)
+RUNS = [int(os.environ['RUN'])] if 'RUN' in os.environ else range(EXP_PARAMS['n_runs'])
+
+for run in RUNS:
     train_rl_agent(
         agent='sac',
         run=run,
@@ -102,5 +105,5 @@ for run in range(EXP_PARAMS['n_runs']):
     )
 
 # GET STATISTICS FROM MULTIPLE RUNS
-if CREATE_LOG and EXP_PARAMS['n_runs'] > 1:
+if CREATE_LOG and EXP_PARAMS['n_runs'] > 1 and 'RUN' not in os.environ:
     create_stats_file(SAVE_PATH, EXP_PARAMS)
