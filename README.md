@@ -129,6 +129,12 @@ Never run training directly on the login node; always submit it with `sbatch` (t
 
 Each run is saved in `log/<case study>/<algo>/run/full/run_<seed>/`, where the case study folder is `de1_bat_hes` (DE-LF) or `al4_bat_ea` (AB-EA). When all runs for a task are done, a stats job writes `stats.csv` and `eval_stats.csv` for each algorithm.
 
+To print a results table in the same format as the paper (average reward over the last 5 training episodes, mean ± std across seeds, in thousand C$):
+
+```bash
+python -m main.summarize_results delf
+```
+
 To copy the results to your laptop, run this on your laptop:
 
 ```bash
