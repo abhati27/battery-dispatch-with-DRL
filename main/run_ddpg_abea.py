@@ -28,8 +28,9 @@ SAVE_PATH = os.path.join('log/', ENV_KWARGS['env_name'], 'ddpg/run', input('Save
 
 # The paper doesn't report tuned DDPG hyperparameters, so this setup reuses the tuned SAC setup for AB-EA
 # (Table C.8: same experiment design, replay and update settings, network) and adds Gaussian exploration
-# noise, which DDPG's deterministic policy needs to explore. NOISE_SIGMA sets the noise level.
-NOISE_SIGMA = float(os.environ.get('NOISE_SIGMA', 0.1))
+# noise, which DDPG's deterministic policy needs to explore. NOISE_SIGMA sets the noise level
+# (0.3 scored slightly higher than 0.1 on AB-EA, within one std).
+NOISE_SIGMA = float(os.environ.get('NOISE_SIGMA', 0.3))
 
 # EXP PARAMS
 EXP_PARAMS = {

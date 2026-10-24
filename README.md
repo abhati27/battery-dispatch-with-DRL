@@ -57,9 +57,9 @@ The `hpc/` folder has everything needed to run both case studies on Wulver with 
 - `delf`: DE-LF/REU (Germany, load following)
 - `abea`: AB-EA (Alberta, energy arbitrage)
 
-All runs for a task train at the same time: PPO and DDPG on CPU, DQN and SAC on A100 GPU slices. A full task takes about 2-3 hours.
+All runs for a task train at the same time: PPO on CPU, DQN, SAC and DDPG on A100 GPU slices. A full task takes about 2-3 hours.
 
-The paper doesn't report tuned DDPG hyperparameters (it drops DDPG after the basic experiments), so `run_ddpg_delf.py` and `run_ddpg_abea.py` use the settings from `run_ddpg.py`.
+The paper doesn't report tuned DDPG hyperparameters (it drops DDPG after the basic experiments). The original settings in `run_ddpg.py` have no exploration noise and only 5 gradient updates per episode, so `run_ddpg_delf.py` and `run_ddpg_abea.py` instead reuse the tuned SAC setup for each task and add Gaussian exploration noise.
 
 ### 1. Log in
 

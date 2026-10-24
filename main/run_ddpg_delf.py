@@ -29,7 +29,7 @@ SAVE_PATH = os.path.join('log/', ENV_KWARGS['env_name'], 'ddpg/run', input('Save
 # The paper doesn't report tuned DDPG hyperparameters, so this setup reuses the tuned SAC setup for DE-LF/REU
 # (Table C.8 and 2 stacked observations: same experiment design, replay and update settings, network) and
 # adds Gaussian exploration noise, which DDPG's deterministic policy needs to explore. NOISE_SIGMA sets the
-# noise level.
+# noise level (0.1 scored slightly higher than 0.3 on DE-LF/REU, within one std).
 NOISE_SIGMA = float(os.environ.get('NOISE_SIGMA', 0.1))
 
 # EXP PARAMS
