@@ -31,8 +31,8 @@ for algo in "${ALGOS[@]}"; do
         sac)  opts="--time=06:00:00 $GPU" ;;
         *) echo "Unknown algorithm: $algo"; exit 1 ;;
     esac
-    id=$(sbatch --parsable --job-name=${TASK}_${algo} $opts hpc/train.sbatch $TASK $algo)
-    echo "Submitted $TASK $algo: $id"
+    id=$(sbatch --parsable --job-name=${TASK}_${algo}${RUN_NAME:+_$RUN_NAME} $opts hpc/train.sbatch $TASK $algo)
+    echo "Submitted $TASK $algo ${RUN_NAME:-full}: $id"
     ids="$ids:$id"
 done
 
