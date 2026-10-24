@@ -35,7 +35,7 @@ EXP_PARAMS = {
     'soc_penalty': 200,
     # Env
     'flatten_obs': True,
-    'frame_stack': 4,
+    'frame_stack': 2,  # Paper (Sec. 5.3): SAC on DE-LF/REU worked best with 2 stacked observations
     # Normalization
     'norm_obs': True,
     'norm_reward': True,

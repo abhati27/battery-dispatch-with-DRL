@@ -2,7 +2,7 @@ import os
 import json
 from typing import Any
 
-from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
+from stable_baselines3.common.noise import NormalActionNoise
 
 from environments.environment import *
 from environments.env_params import *
@@ -26,19 +26,26 @@ LOGGER_TYPE = ["csv", "tensorboard"]
 SAVE_PATH = os.path.join('log/', ENV_KWARGS['env_name'], 'ddpg/run', input('Save in folder: ')) \
     if CREATE_LOG else None
 
+# The paper doesn't report tuned DDPG hyperparameters, so this setup reuses the tuned SAC setup for AB-EA
+# (Table C.8: same experiment design, replay and update settings, network) and adds Gaussian exploration
+# noise, which DDPG's deterministic policy needs to explore. NOISE_SIGMA sets the noise level.
+NOISE_SIGMA = float(os.environ.get('NOISE_SIGMA', 0.1))
+
 # EXP PARAMS
 EXP_PARAMS = {
     'n_runs': int(os.environ.get('N_RUNS', 5)),
     'n_episodes': int(os.environ.get('N_EPISODES', 50)),
     'seed': 22,
     # Reward wrapper
-    'inactive_penalty': None,
-    # 'inactive_penalty': {'patience': 10, 'penalty': 190},
-    'action_corr_penalty': None,
-    'soc_penalty': None,
+    'inactive_penalty': {
+        'patience': 50,
+        'penalty': 160
+    },
+    'action_corr_penalty': 60,
+    'soc_penalty': 30,
     # Env
     'flatten_obs': True,
-    'frame_stack': None,
+    'frame_stack': 4,
     # Normalization
     'norm_obs': True,
     'norm_reward': True,
@@ -50,25 +57,21 @@ EXP_PARAMS = {
 # DDPG PARAMS
 RL_PARAMS: dict[str, Any] = {
     'policy': "MlpPolicy" if EXP_PARAMS['flatten_obs'] else 'MultiInputPolicy',
-    'learning_rate': 1e-3,  # Default: 1e-3
-    # 'learning_rate': linear_schedule(1e-3),
-    'buffer_size': 1_000_000,  # Default: 1e6
-    'learning_starts': 100,  # Default: 100
-    'batch_size': 100,  # Default: 100
-    'tau': 0.005,  # Default: 0.005
-    'gamma': 0.99,  # Default: 0.99
-    # 'train_freq': 100,  # Default: (1, 'episode')
-    'train_freq': (1, 'episode'),  # Default: (1, 'episode'), integer treated as step count
-    'gradient_steps': 5,  # Default: -1 (-1 = as many steps as rollout)
-    'action_noise': None,  # Default: None
-    # 'action_noise': OrnsteinUhlenbeckActionNoise(mean=np.zeros(1), sigma=0.01*np.ones(1)),  # Default: None
+    'learning_rate': 3.2e-4,  # Default: 1e-3
+    'buffer_size': 500_000,  # Default: 1e6
+    'learning_starts': 1000,  # Default: 100
+    'batch_size': 128,  # Default: 100
+    'tau': 0.001075,  # Default: 0.005
+    'gamma': 0.999,  # Default: 0.99
+    'train_freq': 300,  # Default: (1, 'episode')
+    'gradient_steps': -1,  # Default: -1
+    'action_noise': NormalActionNoise(mean=np.zeros(1), sigma=NOISE_SIGMA * np.ones(1)),  # Default: None
 
     'policy_kwargs': {
-        # Defaults reported for MultiInputPolicy
-        'net_arch': 'tiny',  # Default: None
-        'activation_fn': 'tanh',  # Default: tanh
-        'n_critics': 2,  # Default: 2
-        'share_features_extractor': True,  # Default: True
+        'net_arch': 'large',  # Default: None
+        'activation_fn': 'relu',  # Default: relu
+        'n_critics': 2,  # Default: 1
+        'share_features_extractor': True,  # Default: False
     }
 }
 

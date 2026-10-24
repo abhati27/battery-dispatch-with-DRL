@@ -29,4 +29,5 @@ conda activate /course/2026/fall/cs/669/tn294/ab3367/envs/rl39
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
 echo "== $TASK $ALGO run_$RUN | node $(hostname) | partition $SLURM_JOB_PARTITION"
-echo full | python -m main.run_${ALGO}_${TASK}
+# Results folder under log/<env_name>/<algo>/run/ (default: full)
+echo "${RUN_NAME:-full}" | python -m main.run_${ALGO}_${TASK}

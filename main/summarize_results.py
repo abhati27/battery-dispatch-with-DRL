@@ -7,13 +7,14 @@ import statistics
 
 # Summarize finished runs the same way as the paper's Tables 3 and 4: mean ± std across seeds of the
 # average reward over the last 5 training episodes, in thousand C$. Only needs the Python standard library.
-# Usage: python -m main.summarize_results <delf|abea>
+# Usage: python -m main.summarize_results <delf|abea> [results folder, default: full]
 ENV_NAMES = {'delf': 'de1_bat_hes', 'abea': 'al4_bat_ea'}
 
 base = os.path.join('log', ENV_NAMES[sys.argv[1]])
+run_name = sys.argv[2] if len(sys.argv) > 2 else 'full'
 print(f"{'model':6} {'seeds':>5} {'train (last 5 eps)':>20} {'final eval':>16}")
 for algo in ['dqn', 'ppo', 'sac', 'ddpg']:
-    path = os.path.join(base, algo, 'run', 'full')
+    path = os.path.join(base, algo, 'run', run_name)
     if not os.path.isdir(path):
         continue
     with open(os.path.join(path, 'inputs.json')) as f:

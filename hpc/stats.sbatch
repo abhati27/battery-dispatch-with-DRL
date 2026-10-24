@@ -28,5 +28,5 @@ module load Miniforge3
 conda activate /course/2026/fall/cs/669/tn294/ab3367/envs/rl39
 
 for algo in "$@"; do
-    python -m main.make_stats log/$ENV_NAME/$algo/run/full
+    python -m main.make_stats log/$ENV_NAME/$algo/run/${RUN_NAME:-full}
 done
