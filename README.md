@@ -140,3 +140,33 @@ To copy the results to your laptop, run this on your laptop:
 ```bash
 rsync -avz <your-ucid>@wulver.njit.edu:/course/2026/fall/cs/669/tn294/<your-ucid>/battery-dispatch-with-DRL/log/ ./log/
 ```
+
+## Design-choice experiments
+
+These repeat the paper's comparisons of time counters and observation stacking (Table 4) and action spaces (Table 3) for DQN, PPO and SAC. Each experiment starts from the basic set-up (no time counters, no stacking, no reward penalties) and changes one thing:
+
+| Variant | What changes |
+|---|---|
+| `basic` | nothing |
+| `time_regular` | adds hour, week and month counters |
+| `time_sincos` | adds sine/cosine-encoded hour, week and month |
+| `stack2`, `stack4` | stacks the last 2 or 4 observations |
+| `disc3`, `disc17` | 3 or 17 discrete actions (PPO and DQN) |
+
+To run all of them for one task (5 seeds each, about 90 runs):
+
+```bash
+bash hpc/submit_design.sh delf
+```
+
+To print the results laid out like the paper's tables:
+
+```bash
+python -m main.summarize_design delf
+```
+
+To run a single variant yourself, set `VARIANT` (and `RUN_NAME` for the results folder):
+
+```bash
+RUN_NAME=stack4 VARIANT=stack4 bash hpc/submit_all.sh abea sac
+```
