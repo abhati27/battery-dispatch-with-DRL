@@ -165,6 +165,12 @@ To print the results laid out like the paper's tables:
 python -m main.summarize_design delf
 ```
 
+To plot both tasks next to the paper's values (saved in `figures/`):
+
+```bash
+python -m main.plot_design
+```
+
 To run a single variant yourself, set `VARIANT` (and `RUN_NAME` for the results folder):
 
 ```bash
