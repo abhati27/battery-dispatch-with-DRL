@@ -176,3 +176,33 @@ To run a single variant yourself, set `VARIANT` (and `RUN_NAME` for the results 
 ```bash
 RUN_NAME=stack4 VARIANT=stack4 bash hpc/submit_all.sh abea sac
 ```
+
+## Hyperparameter experiments
+
+These are our own experiments (not in the paper). Each run keeps the tuned set-up from Appendix C and changes one hyperparameter:
+
+| Algorithm | Hyperparameter | Values |
+|---|---|---|
+| DQN | discount factor | 0.9, 0.95, 0.99, 0.999 |
+| DQN | exploration (fraction of training over which epsilon decays) | 0.1, 0.3, 0.5 |
+| DQN, SAC | learning rate | 0.3x, 1x, 3x the tuned value |
+| PPO | entropy coefficient | 0.01, 0.1, tuned |
+| SAC | training length | 50, 100 episodes |
+
+Values equal to the tuned one aren't run again; the summary takes them from `run/full`. To run all of them for one task (5 seeds each, 65 runs):
+
+```bash
+bash hpc/submit_hparams.sh delf
+```
+
+To print the results:
+
+```bash
+python -m main.summarize_hparams delf
+```
+
+To run a single setting yourself, set `VARIANT` to the name and value, for example `gamma0.99`, `explore0.3`, `lr_x3` or `ent0.1`:
+
+```bash
+RUN_NAME=gamma0.99 VARIANT=gamma0.99 bash hpc/submit_all.sh abea dqn
+```
