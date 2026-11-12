@@ -7,7 +7,7 @@ from environments.env_params import *
 from utils.net_design import activation_fn_dict, net_arch_dict
 from utils.scheduler import linear_schedule
 from utils.utils import create_stats_file
-from utils.variants import apply_variant
+from utils.variants import apply_variant, apply_hparams
 from train.train import train_rl_agent
 
 
@@ -72,6 +72,8 @@ RL_PARAMS: dict[str, Any] = {
         'activation_fn': 'leaky_relu',  # Default: tanh
     }
 }
+
+apply_hparams(RL_PARAMS, EXP_PARAMS)
 
 if SAVE_PATH is not None:
     os.makedirs(SAVE_PATH, exist_ok=True)

@@ -9,7 +9,8 @@
 #SBATCH --mem=4G
 #SBATCH --output=hpc/out/%x.%j.out
 
-# Short check: 1 seed x 1 episode per algorithm, logged to log/<env_name>/<algo>/run/smoke_<partition>.
+# Short check: 1 seed x 1 episode per algorithm, logged to log/<env_name>/<algo>/run/smoke_<partition>
+# (or RUN_NAME if set).
 # Task is delf (DE-LF/REU) or abea (AB-EA); algorithms default to all four.
 # Submit from the repo root:
 #   CPU: sbatch hpc/smoke.sbatch abea
@@ -36,5 +37,5 @@ python -c "import torch; print('cuda available:', torch.cuda.is_available())"
 
 for algo in "${ALGOS[@]}"; do
     echo "== $TASK $algo"
-    echo "smoke_$SLURM_JOB_PARTITION" | python -m main.run_${algo}_${TASK}
+    echo "${RUN_NAME:-smoke_$SLURM_JOB_PARTITION}" | python -m main.run_${algo}_${TASK}
 done

@@ -6,6 +6,8 @@
 #   bash hpc/submit_all.sh delf ddpg     # only DDPG
 # Set RUN_NAME to save results somewhere other than run/full, e.g.
 #   RUN_NAME=noise0.3 NOISE_SIGMA=0.3 bash hpc/submit_all.sh delf ddpg
+# Set TIME to change the time limit, e.g. for longer runs:
+#   RUN_NAME=ep100 N_EPISODES=100 TIME=08:00:00 bash hpc/submit_all.sh delf sac
 set -e
 cd "$(dirname "$0")/.."
 
@@ -25,10 +27,10 @@ GPU="--partition=course_gpu --gres=gpu:a100_10g:1 --cpus-per-task=1"
 ids=""
 for algo in "${ALGOS[@]}"; do
     case $algo in
-        ppo)  opts="--time=02:00:00" ;;
-        ddpg) opts="--time=06:00:00 $GPU" ;;
-        dqn)  opts="--time=05:00:00 $GPU" ;;
-        sac)  opts="--time=06:00:00 $GPU" ;;
+        ppo)  opts="--time=${TIME:-02:00:00}" ;;
+        ddpg) opts="--time=${TIME:-06:00:00} $GPU" ;;
+        dqn)  opts="--time=${TIME:-05:00:00} $GPU" ;;
+        sac)  opts="--time=${TIME:-06:00:00} $GPU" ;;
         *) echo "Unknown algorithm: $algo"; exit 1 ;;
     esac
     id=$(sbatch --parsable --job-name=${TASK}_${algo}${RUN_NAME:+_$RUN_NAME} $opts hpc/train.sbatch $TASK $algo)
